@@ -20,8 +20,8 @@ Optional:
 - `config.baseId` or `EXABASE_BASE_ID`
 - `config.autoRecall` default `true`
 - `config.autoCapture` default `true`
-- `config.recallLimit` default `6`
-- `config.captureInfer` default `true`
+- `config.recallLimit` default `20`
+- `config.captureInfer` default `false`
 
 ## Setup
 

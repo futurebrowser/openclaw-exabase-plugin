@@ -101,7 +101,7 @@ type PluginApi = {
 const DEFAULT_CONFIG: ResolvedConfig = {
   autoRecall: true,
   autoCapture: true,
-  recallLimit: 6,
+  recallLimit: 20,
   captureInfer: false,
 }
 
@@ -290,7 +290,7 @@ async function searchMemories(args: {
     baseId: args.baseId,
     query: {
       query: args.query,
-      limit: args.limit ?? 6,
+      limit: args.limit ?? 20,
     },
   })
 }
