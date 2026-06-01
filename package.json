@@ -1,0 +1,36 @@
+{
+  "name": "openclaw-exabase-memory",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "OpenClaw memory plugin backed by Exabase M-1",
+  "license": "MIT",
+  "private": false,
+  "files": [
+    "README.md",
+    "dist",
+    "openclaw.plugin.json"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ],
+    "runtimeExtensions": [
+      "./dist/index.js"
+    ],
+    "compat": {
+      "pluginApi": ">=2026.5.7",
+      "minGatewayVersion": "2026.5.7"
+    },
+    "build": {
+      "openclawVersion": "2026.5.7",
+      "pluginSdkVersion": "2026.5.7"
+    }
+  }
+}

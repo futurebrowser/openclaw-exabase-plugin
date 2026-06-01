@@ -1,0 +1,64 @@
+{
+  "id": "openclaw-exabase-memory",
+  "name": "Exabase Memory",
+  "description": "Long-term memory for OpenClaw backed by Exabase M-1.",
+  "kind": "memory",
+  "activation": {
+    "onStartup": true
+  },
+  "contracts": {
+    "tools": [
+      "exabase_memory_store",
+      "exabase_memory_search",
+      "exabase_memory_get",
+      "exabase_memory_update",
+      "exabase_memory_delete"
+    ]
+  },
+  "uiHints": {
+    "apiKey": {
+      "label": "Exabase API key",
+      "placeholder": "exabase_...",
+      "sensitive": true,
+      "help": "API key for https://api.exabase.io"
+    },
+    "baseId": {
+      "label": "Base ID",
+      "placeholder": "optional",
+      "advanced": true,
+      "help": "Optional X-Exabase-Base-Id header value."
+    },
+    "recallLimit": {
+      "label": "Recall limit",
+      "placeholder": "6",
+      "advanced": true,
+      "help": "Maximum memories injected before a turn."
+    }
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "apiKey": {
+        "type": "string"
+      },
+      "baseId": {
+        "type": "string"
+      },
+      "autoRecall": {
+        "type": "boolean"
+      },
+      "autoCapture": {
+        "type": "boolean"
+      },
+      "recallLimit": {
+        "type": "number",
+        "minimum": 1,
+        "maximum": 20
+      },
+      "captureInfer": {
+        "type": "boolean"
+      }
+    }
+  }
+}
