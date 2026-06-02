@@ -1,6 +1,6 @@
 {
   "name": "openclaw-exabase-memory",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "type": "module",
   "description": "OpenClaw memory plugin backed by Exabase M-1",
   "license": "MIT",
