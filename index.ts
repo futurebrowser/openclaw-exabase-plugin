@@ -1,6 +1,5 @@
 import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry"
 import fs from "node:fs"
-import { spawnSync } from "node:child_process"
 import os from "node:os"
 import path from "node:path"
 import { createInterface } from "node:readline/promises"
@@ -349,17 +348,6 @@ function configFilePath(): string {
   return process.env.OPENCLAW_CONFIG_PATH || path.join(os.homedir(), ".openclaw", "openclaw.json")
 }
 
-function setOpenClawConfig(path: string, value: unknown): void {
-  const result = spawnSync(
-    "openclaw",
-    ["config", "set", path, JSON.stringify(value), "--strict-json"],
-    { stdio: "inherit" },
-  )
-  if (result.status !== 0) {
-    throw new Error(`Failed to write OpenClaw config at ${path}`)
-  }
-}
-
 function readOpenClawConfig(): OpenClawRuntimeConfig {
   const filePath = configFilePath()
   if (!fs.existsSync(filePath)) return {}
@@ -369,6 +357,41 @@ function readOpenClawConfig(): OpenClawRuntimeConfig {
   } catch {
     return {}
   }
+}
+
+function setNestedConfigValue(target: Record<string, unknown>, dottedPath: string, value: unknown): void {
+  const segments = dottedPath.split(".").filter(Boolean)
+  if (!segments.length) return
+
+  let current: Record<string, unknown> = target
+  for (let i = 0; i < segments.length - 1; i += 1) {
+    const segment = segments[i]
+    const next = current[segment]
+    if (!next || typeof next !== "object" || Array.isArray(next)) {
+      current[segment] = {}
+    }
+    current = current[segment] as Record<string, unknown>
+  }
+
+  current[segments[segments.length - 1]] = value
+}
+
+function writeOpenClawConfig(configPathKey: string, value: unknown): void {
+  const filePath = configFilePath()
+  const configDir = path.dirname(filePath)
+  fs.mkdirSync(configDir, { recursive: true })
+
+  let config: Record<string, unknown> = {}
+  if (fs.existsSync(filePath)) {
+    try {
+      config = JSON.parse(fs.readFileSync(filePath, "utf-8")) as Record<string, unknown>
+    } catch {
+      config = {}
+    }
+  }
+
+  setNestedConfigValue(config, configPathKey, value)
+  fs.writeFileSync(filePath, `${JSON.stringify(config, null, 2)}\n`)
 }
 
 async function promptForApiKey(): Promise<string> {
@@ -396,11 +419,11 @@ function registerExabaseCli(api: PluginApi, config: ResolvedConfig): void {
           throw new Error("No Exabase API key provided.")
         }
 
-        setOpenClawConfig(`${OPENCLAW_CONFIG_KEY}.apiKey`, apiKey)
-        setOpenClawConfig(`${OPENCLAW_ENTRY_KEY}.hooks.allowConversationAccess`, true)
+        writeOpenClawConfig(`${OPENCLAW_CONFIG_KEY}.apiKey`, apiKey)
+        writeOpenClawConfig(`${OPENCLAW_ENTRY_KEY}.hooks.allowConversationAccess`, true)
 
         const baseId = options?.baseId?.trim()
-        if (baseId) setOpenClawConfig(`${OPENCLAW_CONFIG_KEY}.baseId`, baseId)
+        if (baseId) writeOpenClawConfig(`${OPENCLAW_CONFIG_KEY}.baseId`, baseId)
 
         console.log("Exabase configured.")
         console.log("Restart OpenClaw if the plugin is already loaded.")

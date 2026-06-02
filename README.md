@@ -29,6 +29,7 @@ Run:
 
 ```bash
 openclaw exabase setup
+openclaw gateway restart
 ```
 
 That stores the API key in your OpenClaw config. Use `openclaw exabase status` to check whether the plugin is configured.
